@@ -1,17 +1,19 @@
 import {
   EntitySchemaColumnOptions,
   EntitySchemaRelationOptions,
-} from 'typeorm';
-import { EntitySchemaOptions } from 'typeorm/entity-schema/EntitySchemaOptions';
-import { convertDefault } from './convert-default';
-import { convertType } from './convert-type';
-import { EntityMeta, EntityType } from './graph-meta-interface/entity-meta';
-import { PackageMeta } from './graph-meta-interface/package-meta';
+} from "typeorm";
+import { EntitySchemaOptions } from "typeorm/entity-schema/EntitySchemaOptions";
+import { convertDefault } from "./convert-default";
+import { convertType } from "./convert-type";
+import { EntityMeta, EntityType } from "./graph-meta-interface/entity-meta";
+import { PackageMeta } from "./graph-meta-interface/package-meta";
 import {
   CombinationType,
   RelationMeta,
-} from './graph-meta-interface/relation-meta';
-import { RelationType } from './graph-meta-interface/relation-type';
+} from "./graph-meta-interface/relation-meta";
+import { RelationType } from "./graph-meta-interface/relation-type";
+import { SCHEMAS_DIR } from "src/util/consts";
+import { importJsonsFromDirectories } from "src/util/DirectoryExportedDirectivesLoader";
 
 interface WithUuid {
   uuid: string;
@@ -23,7 +25,6 @@ export interface PackageSchema {
   name: string;
   entitySchemas: (EntitySchemaOptions<any> & WithUuid)[];
 }
-
 
 export class SchemaService {
   private _entitySchemas: (EntitySchemaOptions<any> & WithUuid)[] = [];
@@ -71,7 +72,7 @@ export class SchemaService {
   public getEntityMetaOrFailed(name: string) {
     for (const aPackage of this._packages) {
       const entityMeta = aPackage.entities?.find(
-        (entity) => entity.name === name,
+        (entity) => entity.name === name
       );
       if (entityMeta) {
         return entityMeta;
@@ -83,7 +84,7 @@ export class SchemaService {
   public getEntityMetaOrFailedByUuid(entityUuid: string) {
     for (const aPackage of this._packages) {
       const entityMeta = aPackage.entities?.find(
-        (entity) => entity.uuid === entityUuid,
+        (entity) => entity.uuid === entityUuid
       );
       if (entityMeta) {
         return entityMeta;
@@ -94,7 +95,7 @@ export class SchemaService {
 
   public getRelationSchemaNameOrFailed(
     relationName: string,
-    entityName: string,
+    entityName: string
   ) {
     const entitySchema = this.getSchema(entityName);
     if (!entitySchema) {
@@ -112,10 +113,10 @@ export class SchemaService {
 
   public getRelationEntityMetaOrFailed(
     relationName: string,
-    entityName: string,
+    entityName: string
   ) {
     return this.getEntityMetaOrFailed(
-      this.getRelationSchemaNameOrFailed(relationName, entityName),
+      this.getRelationSchemaNameOrFailed(relationName, entityName)
     );
   }
 
@@ -163,7 +164,7 @@ export class SchemaService {
     const abstractEntityMetas: EntityMeta[] = [];
     const relationMetas: RelationMeta[] = [];
     const packages: PackageMeta[] = importJsonsFromDirectories([
-      SCHEMAS_DIR + '*.json',
+      SCHEMAS_DIR + "*.json",
     ]);
 
     this._packages = packages;
@@ -173,13 +174,13 @@ export class SchemaService {
         ...(aPackage.entities.filter(
           (entity) =>
             entity.entityType !== EntityType.ENUM &&
-            entity.entityType !== EntityType.INTERFACE,
-        ) || []),
+            entity.entityType !== EntityType.INTERFACE
+        ) || [])
       );
       abstractEntityMetas.push(
         ...(aPackage.entities.filter(
-          (entity) => entity.entityType === EntityType.ABSTRACT,
-        ) || []),
+          (entity) => entity.entityType === EntityType.ABSTRACT
+        ) || [])
       );
       relationMetas.push(...(aPackage.relations || []));
     });
@@ -203,13 +204,13 @@ export class SchemaService {
 
       //处理关系，忽略继承关系
       for (const relation of relationMetas.filter(
-        (rela) => rela.relationType !== RelationType.INHERIT,
+        (rela) => rela.relationType !== RelationType.INHERIT
       )) {
         if (relation.sourceId === entityMeta.uuid) {
           relations[relation.roleOnSource] = {
             uuid: relation.uuid,
             target: entityMetas.find(
-              (entity) => entity.uuid === relation.targetId,
+              (entity) => entity.uuid === relation.targetId
             )?.name,
             type: relation.relationType as any, //加any照顾继承
             inverseSide: relation.roleOnTarget,
@@ -236,7 +237,7 @@ export class SchemaService {
           relations[relation.roleOnTarget] = {
             uuid: relation.uuid,
             target: entityMetas.find(
-              (entity) => entity.uuid === relation.sourceId,
+              (entity) => entity.uuid === relation.sourceId
             )?.name,
             type: relationType as any, //加any照顾继承
             inverseSide: relation.roleOnSource,
@@ -273,13 +274,13 @@ export class SchemaService {
 
     // 处理继承关系, 包含的父类部分引用，而不是副本，需要注意数据污染
     for (const relation of relationMetas.filter(
-      (rela) => rela.relationType === RelationType.INHERIT,
+      (rela) => rela.relationType === RelationType.INHERIT
     )) {
       const parent = this._entitySchemas.find(
-        (entity) => entity.uuid === relation.targetId,
+        (entity) => entity.uuid === relation.targetId
       );
       const child = this._entitySchemas.find(
-        (entity) => entity.uuid === relation.sourceId,
+        (entity) => entity.uuid === relation.sourceId
       );
       if (parent && child) {
         child.columns = { ...parent.columns, ...child.columns };
@@ -290,7 +291,7 @@ export class SchemaService {
     //删除 Abstract class
     this._entitySchemas = this.entitySchemas.filter((entitySchema) => {
       return !abstractEntityMetas.find(
-        (meta) => entitySchema.uuid === meta.uuid,
+        (meta) => entitySchema.uuid === meta.uuid
       );
     });
   }
