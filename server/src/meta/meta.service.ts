@@ -5,13 +5,10 @@ import {
 import { EntitySchemaOptions } from 'typeorm/entity-schema/EntitySchemaOptions';
 import { convertDefault } from './convert-default';
 import { convertType } from './convert-type';
-import { EntityMeta, EntityType } from './graph-meta-interface/entity-meta';
-import { PackageMeta } from './graph-meta-interface/package-meta';
-import {
-  CombinationType,
-  RelationMeta,
-} from './graph-meta-interface/relation-meta';
-import { RelationType } from './graph-meta-interface/relation-type';
+import { EntityMeta, EntityType } from './meta-interface/entity-meta';
+import { PackageMeta } from './meta-interface/package-meta';
+import { CombinationType, RelationMeta } from './meta-interface/relation-meta';
+import { RelationType } from './meta-interface/relation-type';
 import { SCHEMAS_DIR } from '../util/consts';
 import { importJsonsFromDirectories } from '../util/DirectoryExportedDirectivesLoader';
 
@@ -26,36 +23,36 @@ export interface PackageSchema {
   entitySchemas: (EntitySchemaOptions<any> & WithUuid)[];
 }
 
-export class SchemaService {
-  private _entitySchemas: (EntitySchemaOptions<any> & WithUuid)[] = [];
+export class metaService {
+  private _entityMetas: (EntitySchemaOptions<any> & WithUuid)[] = [];
   private _packages: PackageMeta[];
 
   constructor() {
-    this.loadPublishedSchemas();
+    this.loadPublishedMetas();
   }
 
   public reload() {
-    this.loadPublishedSchemas();
+    this.loadPublishedMetas();
   }
 
   public get entitySchemas() {
-    return this._entitySchemas;
+    return this._entityMetas;
   }
 
-  public getPackageSchemas() {
+  public getPackageMetas() {
     return this._packages;
   }
 
-  public findEntitySchemaOrFailed(name: string) {
-    const schema = this.getSchema(name);
+  public findEntityMetaOrFailed(name: string) {
+    const schema = this.getMeta(name);
     if (!schema) {
       throw new Error(`Can not find entity "${name}"`);
     }
     return schema;
   }
 
-  public findRelationEntitySchema(entity: string, relationName: string) {
-    const entitySchema = this.getSchema(entity);
+  public findRelationEntityMeta(entity: string, relationName: string) {
+    const entitySchema = this.getMeta(entity);
     if (!entitySchema) {
       throw new Error(`Can not find entity "${entity}"`);
     }
@@ -65,8 +62,8 @@ export class SchemaService {
     return;
   }
 
-  public getSchema(name: string) {
-    return this._entitySchemas.find((schema) => schema.name === name);
+  public getMeta(name: string) {
+    return this._entityMetas.find((schema) => schema.name === name);
   }
 
   public getEntityMetaOrFailed(name: string) {
@@ -93,11 +90,8 @@ export class SchemaService {
     throw new Error(`Can not find entity meta ${entityUuid}`);
   }
 
-  public getRelationSchemaNameOrFailed(
-    relationName: string,
-    entityName: string,
-  ) {
-    const entitySchema = this.getSchema(entityName);
+  public getRelationMetaNameOrFailed(relationName: string, entityName: string) {
+    const entitySchema = this.getMeta(entityName);
     if (!entitySchema) {
       throw new Error(`Entity ${entityName} dose not exist`);
     }
@@ -116,7 +110,7 @@ export class SchemaService {
     entityName: string,
   ) {
     return this.getEntityMetaOrFailed(
-      this.getRelationSchemaNameOrFailed(relationName, entityName),
+      this.getRelationMetaNameOrFailed(relationName, entityName),
     );
   }
 
@@ -158,8 +152,8 @@ export class SchemaService {
     return false;
   }
 
-  private loadPublishedSchemas() {
-    this._entitySchemas = [];
+  private loadPublishedMetas() {
+    this._entityMetas = [];
     const entityMetas: EntityMeta[] = [];
     const abstractEntityMetas: EntityMeta[] = [];
     const relationMetas: RelationMeta[] = [];
@@ -269,17 +263,17 @@ export class SchemaService {
           }),
       };
 
-      this._entitySchemas.push(entitySchemaOption);
+      this._entityMetas.push(entitySchemaOption);
     });
 
     // 处理继承关系, 包含的父类部分引用，而不是副本，需要注意数据污染
     for (const relation of relationMetas.filter(
       (rela) => rela.relationType === RelationType.INHERIT,
     )) {
-      const parent = this._entitySchemas.find(
+      const parent = this._entityMetas.find(
         (entity) => entity.uuid === relation.targetId,
       );
-      const child = this._entitySchemas.find(
+      const child = this._entityMetas.find(
         (entity) => entity.uuid === relation.sourceId,
       );
       if (parent && child) {
@@ -289,7 +283,7 @@ export class SchemaService {
     }
 
     // 删除 Abstract class
-    this._entitySchemas = this.entitySchemas.filter((entitySchema) => {
+    this._entityMetas = this.entitySchemas.filter((entitySchema) => {
       return !abstractEntityMetas.find(
         (meta) => entitySchema.uuid === meta.uuid,
       );

@@ -1,6 +1,6 @@
 import { graphqlHTTP } from 'express-graphql';
 import { buildSchema } from 'graphql';
-import { SchemaService } from './schema/schema.service';
+import { metaService } from './meta/meta.service';
 import { TypeOrmService } from './typeorm/typeorm.service';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -20,7 +20,7 @@ const root = {
   },
 };
 
-const schemaService = new SchemaService();
+const schemaService = new metaService();
 const typeOrmServce = new TypeOrmService(schemaService);
 
 const app = express();

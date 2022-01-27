@@ -5,7 +5,7 @@ import {
   Repository,
 } from 'typeorm';
 import { PlatformTools } from 'typeorm/platform/PlatformTools';
-import { SchemaService } from '../schema/schema.service';
+import { metaService } from '../meta/meta.service';
 import { DB_CONFIG_FILE } from '../util/consts';
 
 const CONNECTION_WITH_SCHEMA_NAME = 'WithSchema';
@@ -15,7 +15,7 @@ export class TypeOrmService {
   private _connection?: Connection;
   // private _connectionNumber = 1;
 
-  constructor(private readonly schemaService: SchemaService) {}
+  constructor(private readonly schemaService: metaService) {}
 
   async createConnection() {
     if (!PlatformTools.fileExist(DB_CONFIG_FILE)) {

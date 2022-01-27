@@ -1,5 +1,5 @@
-import { ColumnMeta } from './graph-meta-interface/column-meta';
-import { ColumnType } from './graph-meta-interface/column-type';
+import { ColumnMeta } from './meta-interface/column-meta';
+import { ColumnType } from './meta-interface/column-type';
 
 export function convertDefault(column: ColumnMeta) {
   if (column.type === ColumnType.Boolean) {
