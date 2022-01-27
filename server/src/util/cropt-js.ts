@@ -1,5 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const CryptoJS = require('crypto-js');
+import CryptoJS from "crypto-js";
 
 export function encropt(message: string, croptKey: string) {
   return CryptoJS.AES.encrypt(message, croptKey).toString();

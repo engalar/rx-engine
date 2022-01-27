@@ -24,7 +24,7 @@ function relationCallback(relationIds) {
   console.log("authorIds:", relationIds);
 
   // 根据 ids 查找：满足作者 id 被 authorIds 包含的作者数据。 返回数组。
-  var authorList = authors.filter((item) => relationIds.includes(item.id));
+  let authorList = authors.filter((item) => relationIds.includes(item.id));
 
   // 通过 groupBy 整理作者数据为对象
   /*  groupById
@@ -34,7 +34,7 @@ function relationCallback(relationIds) {
           '3': [ { id: 3, name: 'Brent Weeks' } ]
       }
    */
-  var groupById = groupBy((item) => item.id, authorList);
+  const groupById = groupBy((item) => item.id, authorList);
 
   // 整理数据，让 authorList 按照 authorIds 中的 id 排序
   /*

@@ -1,5 +1,3 @@
-import { SchemaService } from 'src/schema/schema.service';
-import { DB_CONFIG_FILE } from 'src/util/consts';
 import {
   Connection,
   createConnection,
@@ -7,20 +5,22 @@ import {
   Repository,
 } from 'typeorm';
 import { PlatformTools } from 'typeorm/platform/PlatformTools';
+import { SchemaService } from '../schema/schema.service';
+import { DB_CONFIG_FILE } from '../util/consts';
 
 const CONNECTION_WITH_SCHEMA_NAME = 'WithSchema';
 
 export class TypeOrmService {
-  //private readonly _logger = new Logger('TypeOrmWithSchemaService');
+  // private readonly _logger = new Logger('TypeOrmWithSchemaService');
   private _connection?: Connection;
-  //private _connectionNumber = 1;
+  // private _connectionNumber = 1;
 
   constructor(private readonly schemaService: SchemaService) {}
 
   async createConnection() {
     if (!PlatformTools.fileExist(DB_CONFIG_FILE)) {
       return;
-      //throw new Error(NOT_INSTALL_ERROR);
+      // throw new Error(NOT_INSTALL_ERROR);
     }
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const dbConfig = require(PlatformTools.pathResolve(DB_CONFIG_FILE));
@@ -43,11 +43,11 @@ export class TypeOrmService {
     return this.connection.getRepository(name);
   }
 
-  //会关闭旧连接，并且以新名字创建一个新连接
+  // 会关闭旧连接，并且以新名字创建一个新连接
   async restart() {
     await this.closeConection();
-    //this._connectionNumber++;
-    //重新加载模式
+    // this._connectionNumber++;
+    // 重新加载模式
     this.schemaService.reload();
     await this.createConnection();
 

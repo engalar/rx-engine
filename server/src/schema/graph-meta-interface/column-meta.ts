@@ -44,5 +44,5 @@ export interface ColumnMeta {
   /**
    * Defines a column collation.
    */
-  //collation?: string;
+  // collation?: string;
 }

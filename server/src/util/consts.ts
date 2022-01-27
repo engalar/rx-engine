@@ -5,8 +5,8 @@ export const SALT_OR_ROUNDS = 10;
 export const ALIYUN_CONFIG_KEY = 'aliyun';
 export const BUCKET_MAILS = 'rxmodels-mails';
 export const BUCKET_UPLOADS = 'rxmodels-uploads';
-//export const FOLDER_INBOX = 'inbox';
-//export const FOLDER_SENT = 'sent';
+// export const FOLDER_INBOX = 'inbox';
+// export const FOLDER_SENT = 'sent';
 export const FOLEDER_ATTACHMENTS = 'attachments';
 export const THUMBNAIL_SIZE = {
   width: 400,
