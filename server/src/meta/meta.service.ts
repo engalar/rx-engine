@@ -16,14 +16,7 @@ interface WithUuid {
   uuid: string;
 }
 
-export interface PackageSchema {
-  id: number;
-  uuid: string;
-  name: string;
-  entitySchemas: (EntitySchemaOptions<any> & WithUuid)[];
-}
-
-export class metaService {
+export class MetaService {
   private _entityMetas: (EntitySchemaOptions<any> & WithUuid)[] = [];
   private _packages: PackageMeta[];
 

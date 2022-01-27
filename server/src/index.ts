@@ -1,17 +1,18 @@
 import { graphqlHTTP } from 'express-graphql';
 import { buildSchema } from 'graphql';
-import { metaService } from './meta/meta.service';
+import { MetaService } from './meta/meta.service';
+import { SchemaService } from './schema/schema.service';
 import { TypeOrmService } from './typeorm/typeorm.service';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const express = require('express');
 
 // Construct a schema, using GraphQL schema language
-const schema = buildSchema(`
-  type Query {
-    hello: String
-  }
-`);
+// const schema = buildSchema(`
+//   type Query {
+//     hello: String
+//   }
+// `);
 
 // The root provides a resolver function for each API endpoint
 const root = {
@@ -20,8 +21,9 @@ const root = {
   },
 };
 
-const schemaService = new metaService();
-const typeOrmServce = new TypeOrmService(schemaService);
+const metaService = new MetaService();
+const schema = new SchemaService(metaService).getSchema();
+const typeOrmServce = new TypeOrmService(metaService);
 
 const app = express();
 app.use(
