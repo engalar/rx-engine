@@ -15,7 +15,7 @@ export class TypeOrmService {
   private _connection?: Connection;
   // private _connectionNumber = 1;
 
-  constructor(private readonly schemaService: MetaService) {}
+  constructor(private readonly metaService: MetaService) {}
 
   async createConnection() {
     if (!PlatformTools.fileExist(DB_CONFIG_FILE)) {
@@ -27,8 +27,8 @@ export class TypeOrmService {
 
     this._connection = await createConnection({
       ...dbConfig,
-      entities: this.schemaService.entitySchemas.map(
-        (schema) => new EntitySchema<any>(schema),
+      entities: this.metaService.entityMetas.map(
+        (meta) => new EntitySchema<any>(meta),
       ),
       name: CONNECTION_WITH_SCHEMA_NAME, // + this._connectionNumber,
       synchronize: true,
@@ -48,7 +48,7 @@ export class TypeOrmService {
     await this.closeConection();
     // this._connectionNumber++;
     // 重新加载模式
-    this.schemaService.reload();
+    this.metaService.reload();
     await this.createConnection();
 
     console.debug('Restart success!');

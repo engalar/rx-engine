@@ -28,7 +28,7 @@ export class MetaService {
     this.loadPublishedMetas();
   }
 
-  public get entitySchemas() {
+  public get entityMetas() {
     return this._entityMetas;
   }
 
@@ -276,7 +276,7 @@ export class MetaService {
     }
 
     // 删除 Abstract class
-    this._entityMetas = this.entitySchemas.filter((entitySchema) => {
+    this._entityMetas = this.entityMetas.filter((entitySchema) => {
       return !abstractEntityMetas.find(
         (meta) => entitySchema.uuid === meta.uuid,
       );
