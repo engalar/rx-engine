@@ -7,7 +7,7 @@ export class SchemaService {
   public getSchema(): GraphQLSchema {
     return buildSchema(`
       type Query {
-        hello: String
+        hello2: String
       }
     `);
   }

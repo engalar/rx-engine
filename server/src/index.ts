@@ -16,7 +16,7 @@ const express = require('express');
 
 // The root provides a resolver function for each API endpoint
 const root = {
-  hello: () => {
+  hello2: () => {
     return 'Hello world!';
   },
 };
