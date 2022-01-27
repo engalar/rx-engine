@@ -20,8 +20,9 @@ export class SchemaService {
           queryString =
             queryString +
             `
-          ${_.lowerFirst(entityMeta.name)}: ${entityMeta.name}
-          
+          ${_.lowerFirst(entityMeta.name)}: [${entityMeta.name}]
+          ${_.lowerFirst(entityMeta.name)}ByPk: ${entityMeta.name}
+          ${_.lowerFirst(entityMeta.name)}Aggregate: String
         `;
 
           typeString =
