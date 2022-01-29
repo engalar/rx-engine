@@ -10,8 +10,8 @@ export class SchemaService {
   public getSchema(): GraphQLSchema {
     let queryString = '';
     let typeString = `
-    scalar Date
-    scalar Json
+      scalar Date
+      scalar Json
     `;
     const packages = this.metaService.getPackageMetas();
     for (const packeMeta of packages) {
@@ -39,12 +39,31 @@ export class SchemaService {
                   column.name + ':' + columnTypeToGraphqlScalar(column.type),
               )
               .join(',')}
+            ${this.metaService
+              .getEntityRelationMetas(entityMeta.uuid)
+              .map((relation) => {
+                const targetUuid =
+                  entityMeta.uuid === relation.sourceId
+                    ? relation.targetId
+                    : relation.sourceId;
+                const roleName =
+                  entityMeta.uuid === relation.sourceId
+                    ? relation.roleOnSource
+                    : relation.roleOnTarget;
+                return roleName
+                  ? roleName +
+                      ':' +
+                      this.metaService.getEntityMetaOrFailedByUuid(targetUuid)
+                        .name || ''
+                  : '';
+              })}
           }
         `;
         }
       }
     }
 
+    //console.debug(typeString);
     return buildSchema(`
       ${typeString}
       type Query {

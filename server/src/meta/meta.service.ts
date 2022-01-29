@@ -59,6 +59,22 @@ export class MetaService {
     return this._entityMetas.find((schema) => schema.name === name);
   }
 
+  public getEntityRelationMetas(entityUuid: string) {
+    const relations: RelationMeta[] = [];
+    for (const aPackage of this._packages) {
+      for (const relation of aPackage.relations) {
+        if (
+          relation.sourceId === entityUuid ||
+          relation.targetId === entityUuid
+        ) {
+          relations.push(relation);
+        }
+      }
+    }
+
+    return relations;
+  }
+
   public getEntityMetaOrFailed(name: string) {
     for (const aPackage of this._packages) {
       const entityMeta = aPackage.entities?.find(
