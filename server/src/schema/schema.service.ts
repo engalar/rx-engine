@@ -2,13 +2,17 @@ import { buildSchema, GraphQLSchema } from 'graphql';
 import { EntityType } from '../meta/meta-interface/entity-meta';
 import { MetaService } from '../meta/meta.service';
 import _ = require('lodash');
+import { columnTypeToGraphqlScalar } from './columnTypeToGraphqlScalar';
 
 export class SchemaService {
   constructor(protected metaService: MetaService) {}
 
   public getSchema(): GraphQLSchema {
     let queryString = '';
-    let typeString = '';
+    let typeString = `
+    scalar Date
+    scalar Json
+    `;
     const packages = this.metaService.getPackageMetas();
     for (const packeMeta of packages) {
       for (const entityMeta of packeMeta.entities) {
@@ -30,7 +34,10 @@ export class SchemaService {
             `
           type ${entityMeta.name}{
             ${entityMeta.columns
-              .map((column) => column.name + ':String')
+              .map(
+                (column) =>
+                  column.name + ':' + columnTypeToGraphqlScalar(column.type),
+              )
               .join(',')}
           }
         `;
