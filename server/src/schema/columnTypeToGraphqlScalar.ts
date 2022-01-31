@@ -18,7 +18,7 @@ export function columnTypeToGraphqlScalar(columnType: ColumnType) {
     case ColumnType.SimpleJson:
     case ColumnType.SimpleArray:
     case ColumnType.JsonArray:
-      return 'Json';
+      return 'JSON';
 
     default:
       throw new Error('can not find column type:' + columnType);

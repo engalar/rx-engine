@@ -11,7 +11,7 @@ export class SchemaService {
     let queryString = '';
     let typeString = `
       scalar Date
-      scalar Json
+      scalar JSON
     `;
     const packages = this.metaService.getPackageMetas();
     for (const packeMeta of packages) {
