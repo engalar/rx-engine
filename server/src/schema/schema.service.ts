@@ -70,6 +70,10 @@ export class SchemaService {
         hello2: String
         ${queryString}
       }
+
+      type Mutation {
+        login(name:String!, password:String!):String
+      }
     `);
   }
 }
