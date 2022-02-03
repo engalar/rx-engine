@@ -33,17 +33,25 @@ const schema = new SchemaService(metaService).getSchema();
 const typeOrmServce = new TypeOrmService(metaService);
 
 const app = express();
+
+const createContext = (req) => ({
+  //headers: req.headers,
+  user: (req as any).user,
+});
+
 app.use(
   '/graphql',
   bodyParser.json(),
   auth,
   graphqlHTTP(async (request, response, graphQLParams) => {
-    console.debug('User:', (request as any).user);
+    console.debug('User：', (request as any).user);
     return {
       schema,
       rootValue: root,
-      graphiql: true,
-      context: (request as any).user,
+      graphiql: {
+        headerEditorEnabled: true,
+      },
+      context: createContext(request),
     };
   }),
 );
