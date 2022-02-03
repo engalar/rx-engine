@@ -1,5 +1,5 @@
 import { graphqlHTTP } from 'express-graphql';
-import { jwtSecret } from './globalConfig';
+import { jwtConstants } from './globalConfig';
 import { MetaService } from './meta/meta.service';
 import { SchemaService } from './schema/schema.service';
 import { TypeOrmService } from './typeorm/typeorm.service';
@@ -12,11 +12,7 @@ const jwt = require('express-jwt');
 const bodyParser = require('body-parser');
 
 // auth middleware
-const auth = jwt({
-  secret: jwtSecret,
-  algorithms: ['HS256'],
-  credentialsRequired: false,
-});
+const auth = jwt(jwtConstants);
 
 // Construct a schema, using GraphQL schema language
 // const schema = buildSchema(`
